@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' });
+await page.screenshot({ path: '/home/claude/tjsp-estudos/preview-dashboard.png', fullPage: true });
+await page.goto('http://localhost:3000/estudar/sessao?mode=DAILY_CHALLENGE', { waitUntil: 'networkidle' });
+await page.waitForTimeout(300);
+await page.click('main button:has-text("B")');
+await page.click('button:has-text("Responder")');
+await page.waitForTimeout(300);
+await page.screenshot({ path: '/home/claude/tjsp-estudos/preview-correction.png', fullPage: true });
+await browser.close();
