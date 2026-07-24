@@ -20,7 +20,7 @@ const prisma = new PrismaClient();
 seedDatabase(prisma)
   .then((summary) => {
     console.log(
-      `Concluído: edital "${summary.edition}", ${summary.subjects} matérias, ${summary.topics} assuntos, ${summary.questionsCreated} questões novas inseridas.`
+      `Concluído: edital "${summary.edition}", ${summary.subjects} matérias, ${summary.topics} assuntos, ${summary.questionsCreated} questões de exemplo + ${summary.realQuestionsCreated} questões oficiais novas inseridas.`
     );
   })
   .catch((e) => {

@@ -10,6 +10,29 @@
 
 import type { PrismaClient } from "@prisma/client";
 import { activeEdition, subjects, topics, questions } from "@/lib/mock-data";
+import realData from "@/data/real-questions.json";
+
+type RealSubject = { slug: string; name: string; color: string; order: number };
+type RealTopic = { subjectSlug: string; slug: string; name: string };
+type RealOption = { label: string; text: string; isCorrect: boolean };
+type RealQuestion = {
+  subjectSlug: string;
+  topicSlug: string;
+  topicName: string;
+  statement: string;
+  options: RealOption[];
+  explanation: string;
+  examTip?: string | null;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  examYear: number;
+  examNumber: number;
+};
+
+const real = realData as {
+  subjects: RealSubject[];
+  topics: RealTopic[];
+  questions: RealQuestion[];
+};
 
 export async function seedDatabase(prisma: PrismaClient) {
   const edition = await prisma.examEdition.upsert({
@@ -97,10 +120,90 @@ export async function seedDatabase(prisma: PrismaClient) {
     createdQuestions++;
   }
 
+  // ------------------------------------------------------------------------
+  // Questões OFICIAIS reais (transcritas de provas VUNESP TJSP anteriores,
+  // ver src/data/real-questions.json). Matérias/assuntos próprios dessa
+  // fonte são upsertados separadamente, podendo criar matérias/assuntos
+  // novos além dos 6/14 de exemplo definidos em mock-data.ts.
+  // ------------------------------------------------------------------------
+  const realSubjectIdMap = new Map<string, string>(); // slug -> id
+  for (const s of real.subjects) {
+    const created = await prisma.subject.upsert({
+      where: { examEditionId_slug: { examEditionId: edition.id, slug: s.slug } },
+      update: { name: s.name, order: s.order, color: s.color },
+      create: {
+        examEditionId: edition.id,
+        name: s.name,
+        slug: s.slug,
+        order: s.order,
+        weight: 1,
+        color: s.color,
+      },
+    });
+    realSubjectIdMap.set(s.slug, created.id);
+  }
+
+  const realTopicIdMap = new Map<string, string>(); // "subjectSlug|topicSlug" -> id
+  for (const t of real.topics) {
+    const realSubjectId = realSubjectIdMap.get(t.subjectSlug);
+    if (!realSubjectId) continue;
+    const created = await prisma.topic.upsert({
+      where: { subjectId_slug: { subjectId: realSubjectId, slug: t.slug } },
+      update: { name: t.name },
+      create: {
+        subjectId: realSubjectId,
+        name: t.name,
+        slug: t.slug,
+        incidence: 50,
+      },
+    });
+    realTopicIdMap.set(`${t.subjectSlug}|${t.slug}`, created.id);
+  }
+
+  let createdRealQuestions = 0;
+  for (const q of real.questions) {
+    const realTopicId = realTopicIdMap.get(`${q.subjectSlug}|${q.topicSlug}`);
+    if (!realTopicId) continue;
+
+    const existing = await prisma.question.findFirst({
+      where: { statement: q.statement, topicId: realTopicId },
+    });
+    if (existing) continue;
+
+    await prisma.question.create({
+      data: {
+        topicId: realTopicId,
+        statement: q.statement,
+        origin: "OFICIAL",
+        difficulty: q.difficulty,
+        explanation: q.explanation,
+        examTip: q.examTip ?? null,
+        examBoard: "VUNESP",
+        examName: "TJSP Escrevente Técnico Judiciário",
+        examYear: q.examYear,
+        source: `Prova VUNESP TJSP ${q.examYear} - Escrevente Técnico Judiciário (questão ${q.examNumber})`,
+        tags: [q.subjectSlug, q.topicSlug, String(q.examYear)],
+        status: "APPROVED",
+        generatedBy: null,
+        options: {
+          create: q.options.map((o, i) => ({
+            label: o.label,
+            text: o.text,
+            isCorrect: o.isCorrect,
+            rationale: null,
+            order: i,
+          })),
+        },
+      },
+    });
+    createdRealQuestions++;
+  }
+
   return {
     edition: `${edition.examName} ${edition.edition}`,
-    subjects: subjectIdMap.size,
-    topics: topicIdMap.size,
+    subjects: subjectIdMap.size + realSubjectIdMap.size,
+    topics: topicIdMap.size + realTopicIdMap.size,
     questionsCreated: createdQuestions,
+    realQuestionsCreated: createdRealQuestions,
   };
 }
