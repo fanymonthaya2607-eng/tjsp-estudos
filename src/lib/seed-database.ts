@@ -34,6 +34,10 @@ const real = realData as {
   questions: RealQuestion[];
 };
 
+function existingKey(statement: string, topicId: string) {
+  return `${topicId}::${statement}`;
+}
+
 export async function seedDatabase(prisma: PrismaClient) {
   const edition = await prisma.examEdition.upsert({
     where: { examName_edition: { examName: activeEdition.examName, edition: activeEdition.edition } },
@@ -82,15 +86,20 @@ export async function seedDatabase(prisma: PrismaClient) {
     topicIdMap.set(t.id, created.id);
   }
 
+  // Busca de uma vez só quais questões já existem (statement+topicId), em vez
+  // de uma consulta por questão — evita centenas de round-trips ao banco e
+  // o risco de timeout na função serverless ao popular um lote grande.
+  const existingRows = await prisma.question.findMany({ select: { statement: true, topicId: true } });
+  const existingSet = new Set(existingRows.map((r) => existingKey(r.statement, r.topicId)));
+
   let createdQuestions = 0;
   for (const q of questions) {
     const realTopicId = topicIdMap.get(q.topicId);
     if (!realTopicId) continue;
 
-    const existing = await prisma.question.findFirst({
-      where: { statement: q.statement, topicId: realTopicId },
-    });
-    if (existing) continue;
+    const key = existingKey(q.statement, realTopicId);
+    if (existingSet.has(key)) continue;
+    existingSet.add(key);
 
     await prisma.question.create({
       data: {
@@ -165,10 +174,9 @@ export async function seedDatabase(prisma: PrismaClient) {
     const realTopicId = realTopicIdMap.get(`${q.subjectSlug}|${q.topicSlug}`);
     if (!realTopicId) continue;
 
-    const existing = await prisma.question.findFirst({
-      where: { statement: q.statement, topicId: realTopicId },
-    });
-    if (existing) continue;
+    const key = existingKey(q.statement, realTopicId);
+    if (existingSet.has(key)) continue;
+    existingSet.add(key);
 
     await prisma.question.create({
       data: {

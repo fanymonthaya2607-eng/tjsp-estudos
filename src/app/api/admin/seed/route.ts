@@ -15,6 +15,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { seedDatabase } from "@/lib/seed-database";
 
+// Popular ~280 questões envolve várias escritas no banco; o padrão de
+// alguns planos da Vercel é bem curto (10s), então damos mais fôlego aqui.
+export const maxDuration = 120;
+
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get("key");
   const expected = process.env.AUTH_SECRET;
