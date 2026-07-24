@@ -60,10 +60,10 @@ Abra http://localhost:3000 — o app já funciona de ponta a ponta com os dados 
 
 ## Preparando o banco de dados real (próxima etapa)
 
-O schema já está pronto em `prisma/schema.prisma`. Quando quiser conectar um banco de verdade:
+O schema já está pronto em `prisma/schema.prisma`. A partir do Prisma 7, a *connection string* não fica mais dentro do schema — ela é configurada em `prisma.config.ts` (na raiz do projeto), que já está pronto para ler `DATABASE_URL` do `.env`. Quando quiser conectar um banco de verdade:
 
 1. Crie um banco PostgreSQL gratuito (recomendado: [Neon](https://neon.tech) ou [Supabase](https://supabase.com) — ambos têm integração de um clique com a Vercel).
-2. Copie a *connection string* para `DATABASE_URL` no arquivo `.env`.
+2. Copie a *connection string* para `DATABASE_URL` no arquivo `.env` (localmente) e também nas variáveis de ambiente do projeto na Vercel.
 3. Rode as migrations e o seed:
    ```bash
    npm run db:migrate   # cria as tabelas
@@ -71,7 +71,9 @@ O schema já está pronto em `prisma/schema.prisma`. Quando quiser conectar um b
    ```
 4. Rode `npm run db:studio` para navegar pelos dados visualmente (Prisma Studio).
 
-> **Nota:** neste ambiente de desenvolvimento (sandbox) usado para montar o projeto, não foi possível baixar os binários do motor do Prisma por causa de uma restrição de rede do próprio sandbox — por isso o schema foi validado por inspeção e a interface foi testada inteiramente com dados de exemplo. Isso **não afeta você**: na sua máquina ou no build da Vercel, `npx prisma generate`/`migrate` funcionam normalmente.
+> **Nota:** neste ambiente de desenvolvimento (sandbox) usado para montar o projeto, não foi possível baixar os binários do motor do Prisma por causa de uma restrição de rede do próprio sandbox — por isso o schema foi validado com `prisma validate` (que confirma a configuração sem precisar baixar o motor) e a interface foi testada inteiramente com dados de exemplo. Isso **não afeta você**: na sua máquina ou no build da Vercel, `npx prisma generate`/`migrate` funcionam normalmente.
+>
+> Enquanto o banco real não está conectado, mantenha um valor qualquer (placeholder) em `DATABASE_URL` — tanto no `.env` local quanto nas variáveis de ambiente da Vercel — para que `prisma generate` (rodado automaticamente a cada instalação via `postinstall`) não falhe por falta da variável.
 
 ## Variáveis de ambiente
 
