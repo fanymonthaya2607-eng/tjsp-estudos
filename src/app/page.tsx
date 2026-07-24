@@ -67,26 +67,26 @@ export default async function DashboardPage() {
       <section>
         <Link
           href="/estudar/sessao?mode=QUICK_STUDY"
-          className="group flex items-center justify-between rounded-2xl bg-[var(--primary)] p-5 text-white shadow-lg shadow-[var(--primary)]/20 transition-transform active:scale-[0.99]"
+          className="group flex items-center justify-between rounded-2xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-dark)] p-5 text-white shadow-lg shadow-[var(--primary)]/20 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[var(--primary)]/30 active:translate-y-0 active:scale-[0.99]"
         >
           <div>
             <p className="flex items-center gap-2 text-lg font-bold">
-              <PlayCircle size={22} /> Estudar agora
+              <PlayCircle size={22} className="transition-transform group-hover:scale-110" /> Estudar agora
             </p>
             <p className="mt-1 text-sm text-white/85">
               Sessão personalizada de 10 questões, com foco nos seus pontos fracos
             </p>
           </div>
-          <ArrowRight className="shrink-0 transition-transform group-hover:translate-x-1" />
+          <ArrowRight className="shrink-0 transition-transform group-hover:translate-x-1.5" />
         </Link>
 
         <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Link
             href="/revisar"
-            className="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--primary)]"
+            className="group flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-md"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--danger-light)] text-[var(--danger)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--danger-light)] text-[var(--danger)] transition-transform group-hover:scale-110">
                 <RotateCcw size={18} />
               </div>
               <div>
@@ -94,15 +94,15 @@ export default async function DashboardPage() {
                 <p className="text-xs text-[var(--muted)]">{wrongIds.length} questões para revisar</p>
               </div>
             </div>
-            <ArrowRight size={16} className="text-[var(--muted)]" />
+            <ArrowRight size={16} className="text-[var(--muted)] transition-transform group-hover:translate-x-1" />
           </Link>
 
           <Link
             href="/estudar/sessao?mode=DAILY_CHALLENGE"
-            className="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--primary)]"
+            className="group flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-md"
           >
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--warning-light)] text-[var(--warning)]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--warning-light)] text-[var(--warning)] transition-transform group-hover:scale-110">
                 <Swords size={18} />
               </div>
               <div>
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                 <p className="text-xs text-[var(--muted)]">5 questões · vale XP em dobro</p>
               </div>
             </div>
-            <ArrowRight size={16} className="text-[var(--muted)]" />
+            <ArrowRight size={16} className="text-[var(--muted)] transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
       </section>

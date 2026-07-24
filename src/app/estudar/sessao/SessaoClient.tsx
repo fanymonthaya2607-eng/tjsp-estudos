@@ -44,7 +44,7 @@ export default function SessaoClient({
         </p>
         <Link
           href="/estudar"
-          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white"
+          className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white hover:-translate-y-0.5 hover:bg-[var(--primary-dark)] hover:shadow-md active:translate-y-0"
         >
           Voltar para Estudar
         </Link>
@@ -55,8 +55,8 @@ export default function SessaoClient({
   if (finished) {
     const accuracy = Math.round((correctCount / questions.length) * 100);
     return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--primary-light)] text-[var(--primary)]">
+      <div className="animate-pop-in rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--primary-light)] text-[var(--primary)] shadow-inner">
           <Trophy size={28} />
         </div>
         <h1 className="text-xl font-bold">Sessão concluída!</h1>
@@ -76,13 +76,13 @@ export default function SessaoClient({
         <div className="mx-auto mt-6 flex max-w-xs flex-col gap-2">
           <Link
             href="/"
-            className="flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] py-3 text-sm font-semibold text-white"
+            className="flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] py-3 text-sm font-semibold text-white shadow-sm hover:-translate-y-0.5 hover:bg-[var(--primary-dark)] hover:shadow-md active:translate-y-0"
           >
             <Home size={16} /> Voltar ao início
           </Link>
           <Link
             href="/estudar"
-            className="flex items-center justify-center gap-2 rounded-xl border border-[var(--border)] py-3 text-sm font-semibold"
+            className="flex items-center justify-center gap-2 rounded-xl border border-[var(--border)] py-3 text-sm font-semibold hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-sm active:translate-y-0"
           >
             <RotateCcw size={16} /> Estudar novamente
           </Link>

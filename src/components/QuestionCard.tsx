@@ -48,14 +48,14 @@ export default function QuestionCard({
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+    <div className="animate-pop-in rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
         <span className="text-xs font-semibold text-[var(--muted)]">
           Questão {index + 1} de {total}
         </span>
         <button
           onClick={handleToggleSave}
-          className="flex items-center gap-1 text-xs font-medium text-[var(--muted)] transition-colors hover:text-[var(--primary)]"
+          className="flex items-center gap-1 text-xs font-medium text-[var(--muted)] hover:scale-105 hover:text-[var(--primary)]"
         >
           {saved ? <BookmarkCheck size={16} className="text-[var(--primary)]" /> : <Bookmark size={16} />}
           {saved ? "Salva" : "Salvar"}
@@ -78,7 +78,7 @@ export default function QuestionCard({
         {question.options.map((option) => {
           const isSelected = selectedId === option.id;
           let stateClass =
-            "border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--primary-light)]/40";
+            "border-[var(--border)] hover:border-[var(--primary)] hover:bg-[var(--primary-light)]/40 hover:-translate-y-0.5 hover:shadow-sm";
 
           if (submitted) {
             if (option.isCorrect) {
@@ -97,7 +97,7 @@ export default function QuestionCard({
               key={option.id}
               disabled={submitted}
               onClick={() => setSelectedId(option.id)}
-              className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left text-sm transition-colors disabled:cursor-default ${stateClass}`}
+              className={`flex w-full items-start gap-3 rounded-xl border p-3.5 text-left text-sm disabled:cursor-default disabled:hover:translate-y-0 disabled:hover:shadow-none active:scale-[0.99] ${stateClass}`}
             >
               <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-current text-xs font-semibold">
                 {option.label}
@@ -118,14 +118,14 @@ export default function QuestionCard({
         <button
           onClick={handleSubmit}
           disabled={!selectedId}
-          className="mt-5 w-full rounded-xl bg-[var(--primary)] py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)] disabled:cursor-not-allowed disabled:opacity-40"
+          className="mt-5 w-full rounded-xl bg-[var(--primary)] py-3 text-sm font-semibold text-white shadow-sm enabled:hover:-translate-y-0.5 enabled:hover:bg-[var(--primary-dark)] enabled:hover:shadow-md enabled:active:translate-y-0 enabled:active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
         >
           Responder
         </button>
       ) : (
         <div className="mt-5 space-y-4">
           <div
-            className={`flex items-center gap-2 rounded-xl p-3.5 text-sm font-semibold ${
+            className={`animate-pop-in flex items-center gap-2 rounded-xl p-3.5 text-sm font-semibold ${
               isCorrect ? "bg-[var(--success-light)] text-[var(--success)]" : "bg-[var(--danger-light)] text-[var(--danger)]"
             }`}
           >
@@ -160,7 +160,7 @@ export default function QuestionCard({
 
           <button
             onClick={onNext}
-            className="w-full rounded-xl bg-[var(--foreground)] py-3 text-sm font-semibold text-white transition-colors hover:opacity-90"
+            className="w-full rounded-xl bg-[var(--foreground)] py-3 text-sm font-semibold text-[var(--background)] shadow-sm hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md active:translate-y-0 active:scale-[0.98]"
           >
             {index + 1 === total ? "Ver resultado" : "Próxima questão"}
           </button>

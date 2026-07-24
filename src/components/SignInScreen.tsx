@@ -4,7 +4,7 @@ import { Scale, BookOpenCheck, Target, Brain } from "lucide-react";
 export default function SignInScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--background)] px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center shadow-sm">
+      <div className="animate-pop-in w-full max-w-sm rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 text-center shadow-sm">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--primary)] text-white">
           <Scale size={24} />
         </div>
@@ -42,7 +42,7 @@ export default function SignInScreen() {
         >
           <button
             type="submit"
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-white py-3 text-sm font-semibold text-[var(--foreground)] shadow-sm transition-colors hover:bg-[var(--background)]"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] py-3 text-sm font-semibold text-[var(--foreground)] shadow-sm hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-md active:translate-y-0 active:scale-[0.98]"
           >
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
               <path

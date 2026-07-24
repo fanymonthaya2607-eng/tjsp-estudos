@@ -96,9 +96,9 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
           <Link
             key={m.title}
             href={m.href}
-            className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--primary)]"
+            className="group flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 hover:-translate-y-1 hover:border-[var(--primary)] hover:shadow-md"
           >
-            <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${m.color}`}>
+            <div className={`flex h-9 w-9 items-center justify-center rounded-xl transition-transform group-hover:scale-110 group-hover:rotate-3 ${m.color}`}>
               <m.icon size={18} />
             </div>
             <div>
@@ -130,7 +130,7 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
                   setSubjectId(e.target.value);
                   setTopicId("");
                 }}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm transition-colors focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
               >
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -145,7 +145,7 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
               <select
                 value={topicId}
                 onChange={(e) => setTopicId(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm transition-colors focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
               >
                 <option value="">Todos os assuntos</option>
                 {topicsForSubject.map((t) => (
@@ -161,7 +161,7 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm transition-colors focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
               >
                 <option value="ALL">Todas</option>
                 <option value="EASY">Fácil</option>
@@ -175,7 +175,7 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
               <select
                 value={count}
                 onChange={(e) => setCount(Number(e.target.value))}
-                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2.5 text-sm transition-colors focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)]"
               >
                 {[5, 10, 15, 20].map((n) => (
                   <option key={n} value={n}>
@@ -189,7 +189,7 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Link
               href={freeStudyHref}
-              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)]"
+              className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] py-3 text-sm font-semibold text-white shadow-sm hover:-translate-y-0.5 hover:bg-[var(--primary-dark)] hover:shadow-md active:translate-y-0 active:scale-[0.98]"
             >
               <Sparkles size={16} />
               Começar estudo livre
@@ -198,7 +198,7 @@ export default function EstudarClient({ subjects }: { subjects: SubjectWithTopic
             {topicTrainingHref && (
               <Link
                 href={topicTrainingHref}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border)] py-3 text-sm font-semibold transition-colors hover:border-[var(--primary)]"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--border)] py-3 text-sm font-semibold hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-sm active:translate-y-0"
               >
                 Treinar só este assunto
               </Link>

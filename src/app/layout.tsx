@@ -5,6 +5,19 @@ import { getOrCreateUserStreak } from "@/lib/queries";
 import SideNav from "@/components/SideNav";
 import BottomNav from "@/components/BottomNav";
 import SignInScreen from "@/components/SignInScreen";
+import ThemeToggle from "@/components/ThemeToggle";
+
+// Roda antes da hidratação para aplicar o tema salvo (ou a preferência do
+// sistema) sem "flash" da cor errada na primeira pintura da página.
+const themeInitScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("theme");
+    var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (dark) document.documentElement.classList.add("dark");
+  } catch (e) {}
+})();
+`;
 
 export const metadata: Metadata = {
   title: "TJSP Estudos — Escrevente Técnico Judiciário",
@@ -22,7 +35,11 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR" className="h-full antialiased">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full bg-[var(--background)] text-[var(--foreground)] font-sans">
+        <ThemeToggle />
         {session?.user && streak ? (
           <>
             <div className="mx-auto flex min-h-screen max-w-7xl">

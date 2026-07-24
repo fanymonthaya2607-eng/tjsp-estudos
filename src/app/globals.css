@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #f6f7fb;
   --surface: #ffffff;
   --foreground: #191a23;
@@ -15,6 +16,24 @@
   --danger-light: #fef2f2;
   --warning: #d97706;
   --warning-light: #fffbeb;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #0e0f16;
+  --surface: #171922;
+  --foreground: #f1f2f6;
+  --muted: #9aa0ae;
+  --border: #2b2e3a;
+  --primary: #6366f1;
+  --primary-dark: #a5b4fc;
+  --primary-light: #232842;
+  --success: #34d399;
+  --success-light: #123027;
+  --danger: #f87171;
+  --danger-light: #3a1518;
+  --warning: #fbbf24;
+  --warning-light: #3a2c0c;
 }
 
 @theme inline {
@@ -39,6 +58,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 * {
@@ -48,4 +68,29 @@ body {
 ::selection {
   background: var(--primary-light);
   color: var(--primary-dark);
+}
+
+/* Transição suave de cores ao trocar de tema, sem animar tudo (evita
+   "flash" estranho em layout/tamanho durante navegação normal). */
+.themeable,
+button,
+a {
+  transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-pop-in {
+  animation: pop-in 0.25s ease both;
 }

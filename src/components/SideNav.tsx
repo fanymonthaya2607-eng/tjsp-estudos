@@ -43,13 +43,13 @@ export default function SideNav({
               <li key={href}>
                 <Link
                   href={href}
-                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ${
                     active
-                      ? "bg-[var(--primary-light)] text-[var(--primary-dark)]"
-                      : "text-[var(--foreground)] hover:bg-[var(--background)]"
+                      ? "bg-[var(--primary-light)] text-[var(--primary-dark)] shadow-sm"
+                      : "text-[var(--foreground)] hover:translate-x-0.5 hover:bg-[var(--background)]"
                   }`}
                 >
-                  <Icon size={18} strokeWidth={active ? 2.4 : 2} />
+                  <Icon size={18} strokeWidth={active ? 2.4 : 2} className={active ? "scale-110" : ""} />
                   {label}
                 </Link>
               </li>
@@ -88,7 +88,7 @@ export default function SideNav({
             <button
               type="submit"
               title="Sair"
-              className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:bg-[var(--background)] hover:text-[var(--danger)]"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--muted)] hover:scale-110 hover:bg-[var(--background)] hover:text-[var(--danger)]"
             >
               <LogOut size={14} />
             </button>

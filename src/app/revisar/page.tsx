@@ -35,9 +35,9 @@ export default async function RevisarPage() {
           {wrongQuestions.length > 0 && (
             <Link
               href="/estudar/sessao?mode=ERROR_REVIEW"
-              className="flex items-center gap-1 rounded-xl bg-[var(--primary)] px-3.5 py-2 text-xs font-semibold text-white"
+              className="group flex items-center gap-1 rounded-xl bg-[var(--primary)] px-3.5 py-2 text-xs font-semibold text-white hover:-translate-y-0.5 hover:bg-[var(--primary-dark)] hover:shadow-md active:translate-y-0"
             >
-              Revisar tudo <ChevronRight size={14} />
+              Revisar tudo <ChevronRight size={14} className="transition-transform group-hover:translate-x-1" />
             </Link>
           )}
         </div>
@@ -45,7 +45,7 @@ export default async function RevisarPage() {
         {wrongQuestions.length > 0 ? (
           <ul className="space-y-2">
             {wrongQuestions.map((q) => (
-              <li key={q.id} className="rounded-xl border border-[var(--border)] p-3.5">
+              <li key={q.id} className="themeable rounded-xl border border-[var(--border)] p-3.5 hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-sm">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <OriginBadge origin={q.origin} />
                   <DifficultyBadge difficulty={q.difficulty} />
@@ -76,7 +76,7 @@ export default async function RevisarPage() {
         {savedQuestions.length > 0 ? (
           <ul className="space-y-2">
             {savedQuestions.map((q) => (
-              <li key={q.id} className="rounded-xl border border-[var(--border)] p-3.5">
+              <li key={q.id} className="themeable rounded-xl border border-[var(--border)] p-3.5 hover:-translate-y-0.5 hover:border-[var(--primary)] hover:shadow-sm">
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <OriginBadge origin={q.origin} />
                   <DifficultyBadge difficulty={q.difficulty} />

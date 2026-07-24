@@ -21,7 +21,7 @@ export default function StatCard({
   }[accent];
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
+    <div className="themeable rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 hover:-translate-y-0.5 hover:shadow-md">
       <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-xl ${accentClass}`}>
         <Icon size={18} />
       </div>

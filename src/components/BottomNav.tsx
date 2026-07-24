@@ -24,11 +24,15 @@ export default function BottomNav() {
             <li key={href} className="flex-1">
               <Link
                 href={href}
-                className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors ${
-                  active ? "text-[var(--primary)]" : "text-[var(--muted)]"
+                className={`flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium ${
+                  active ? "text-[var(--primary)]" : "text-[var(--muted)] hover:text-[var(--foreground)]"
                 }`}
               >
-                <Icon size={20} strokeWidth={active ? 2.4 : 2} />
+                <Icon
+                  size={20}
+                  strokeWidth={active ? 2.4 : 2}
+                  className={active ? "scale-110" : "scale-100"}
+                />
                 {label}
               </Link>
             </li>

@@ -37,7 +37,10 @@ export default function SimuladosPage() {
 
       <section className="space-y-3">
         {simuladoTemplates.map((sim) => (
-          <div key={sim.id} className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+          <div
+            key={sim.id}
+            className="themeable rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 hover:-translate-y-0.5 hover:shadow-md"
+          >
             <div className="mb-3 flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--success-light)] text-[var(--success)]">
@@ -59,7 +62,7 @@ export default function SimuladosPage() {
             </div>
             <Link
               href={`/estudar/sessao?mode=SIMULADO&count=${sim.totalQuestions}`}
-              className="inline-flex items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-dark)]"
+              className="inline-flex items-center justify-center rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:-translate-y-0.5 hover:bg-[var(--primary-dark)] hover:shadow-md active:translate-y-0 active:scale-[0.98]"
             >
               Iniciar simulado
             </Link>
