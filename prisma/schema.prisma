@@ -9,18 +9,19 @@
 // máquina (ou deixe a Vercel rodar no build) — este sandbox de desenvolvimento
 // não tem acesso de rede aos binários do Prisma, mas isso não afeta o uso
 // normal do projeto fora daqui.
+//
+// Usamos Prisma 6 (versão estável e madura) em vez do Prisma 7 (recém-lançado,
+// com mudanças grandes de configuração e ainda pouco documentado) para manter
+// o projeto em uma base sólida e bem testada.
 // ==========================================================================
 
 generator client {
   provider = "prisma-client-js"
 }
 
-// A partir do Prisma 7, a connection string NÃO fica mais aqui.
-// Ela é configurada em prisma.config.ts (para os comandos da CLI, como
-// migrate/studio) e, futuramente, passada via "adapter" ao instanciar o
-// PrismaClient no código da aplicação (ver prisma.config.ts e README.md).
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ==========================================================================
@@ -122,6 +123,7 @@ model Subject {
   slug          String
   order         Int      @default(0)
   weight        Int      @default(1) // peso/importância na prova
+  color         String   @default("#4f46e5") // cor usada nos gráficos de desempenho
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

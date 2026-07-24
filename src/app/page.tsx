@@ -8,9 +8,18 @@ import {
   Swords,
   PlayCircle,
 } from "lucide-react";
-import { mockUser, subjectPerformance, weakTopics } from "@/lib/mock-data";
+import { auth } from "@/lib/auth";
+import {
+  getActiveEdition,
+  getOrCreateUserStreak,
+  getUserOverview,
+  getSubjectPerformance,
+  getWeakTopics,
+  getWrongQuestionIds,
+} from "@/lib/queries";
 import StatCard from "@/components/StatCard";
 import SubjectBar from "@/components/SubjectBar";
+import EditalPendente from "@/components/EditalPendente";
 
 function greeting() {
   const hour = new Date().getHours();
@@ -19,26 +28,40 @@ function greeting() {
   return "Boa noite";
 }
 
-export default function DashboardPage() {
-  const overallAccuracy = Math.round(
-    (mockUser.questionsCorrectTotal / mockUser.questionsAnsweredTotal) * 100
-  );
+export default async function DashboardPage() {
+  const session = await auth();
+  if (!session?.user) return null;
+  const userId = session.user.id;
+  const firstName = (session.user.name ?? "").split(" ")[0] || "por aí";
+
+  const edition = await getActiveEdition();
+  if (!edition) return <EditalPendente />;
+
+  const [streak, overview, subjectPerformance, weakTopics, wrongIds] = await Promise.all([
+    getOrCreateUserStreak(userId),
+    getUserOverview(userId),
+    getSubjectPerformance(userId, edition.id),
+    getWeakTopics(userId),
+    getWrongQuestionIds(userId, 200),
+  ]);
+
+  const hasAnswered = overview.questionsAnsweredTotal > 0;
 
   return (
     <div className="space-y-8">
       <section>
-        <p className="text-sm text-[var(--muted)]">{greeting()}, {mockUser.name} 👋</p>
+        <p className="text-sm text-[var(--muted)]">{greeting()}, {firstName} 👋</p>
         <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Vamos estudar?</h1>
         <p className="mt-1 text-sm text-[var(--muted)]">
-          Concurso TJSP · Escrevente Técnico Judiciário · Banca VUNESP
+          {edition.examName} · {edition.edition} · Banca {edition.organizer}
         </p>
       </section>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard icon={Flame} label="Sequência atual" value={`${mockUser.currentStreakDays} dias`} accent="warning" />
-        <StatCard icon={Target} label="Taxa de acerto" value={`${overallAccuracy}%`} accent="success" />
-        <StatCard icon={BookOpenCheck} label="Questões respondidas" value={`${mockUser.questionsAnsweredTotal}`} accent="primary" />
-        <StatCard icon={Swords} label="Nível" value={`${mockUser.level}`} hint={`${mockUser.xp} XP`} accent="danger" />
+        <StatCard icon={Flame} label="Sequência atual" value={`${streak.currentStreak} dias`} accent="warning" />
+        <StatCard icon={Target} label="Taxa de acerto" value={`${overview.accuracy}%`} accent="success" />
+        <StatCard icon={BookOpenCheck} label="Questões respondidas" value={`${overview.questionsAnsweredTotal}`} accent="primary" />
+        <StatCard icon={Swords} label="Nível" value={`${streak.level}`} hint={`${streak.xp} XP`} accent="danger" />
       </section>
 
       <section>
@@ -68,7 +91,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold">Revisar erros</p>
-                <p className="text-xs text-[var(--muted)]">4 questões para revisar</p>
+                <p className="text-xs text-[var(--muted)]">{wrongIds.length} questões para revisar</p>
               </div>
             </div>
             <ArrowRight size={16} className="text-[var(--muted)]" />
@@ -108,19 +131,27 @@ export default function DashboardPage() {
 
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <h2 className="mb-3 text-base font-semibold">Seus pontos fracos</h2>
-        <ul className="space-y-2">
-          {weakTopics.map((t, i) => (
-            <li key={t.topicId} className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--danger-light)] text-[10px] font-bold text-[var(--danger)]">
-                  {i + 1}
-                </span>
-                <span>{t.topicName}</span>
-              </div>
-              <span className="text-[var(--muted)]">{t.accuracy}% de acerto</span>
-            </li>
-          ))}
-        </ul>
+        {weakTopics.length > 0 ? (
+          <ul className="space-y-2">
+            {weakTopics.map((t, i) => (
+              <li key={t.topicId} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--danger-light)] text-[10px] font-bold text-[var(--danger)]">
+                    {i + 1}
+                  </span>
+                  <span>{t.topicName}</span>
+                </div>
+                <span className="text-[var(--muted)]">{t.accuracy}% de acerto</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-[var(--muted)]">
+            {hasAnswered
+              ? "Continue respondendo questões para identificarmos seus pontos fracos com mais precisão."
+              : "Responda algumas questões para começarmos a identificar seus pontos fracos."}
+          </p>
+        )}
       </section>
     </div>
   );

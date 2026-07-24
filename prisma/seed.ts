@@ -42,13 +42,14 @@ async function main() {
   for (const s of subjects) {
     const created = await prisma.subject.upsert({
       where: { examEditionId_slug: { examEditionId: edition.id, slug: s.slug } },
-      update: { name: s.name, order: s.order, weight: s.weight },
+      update: { name: s.name, order: s.order, weight: s.weight, color: s.color },
       create: {
         examEditionId: edition.id,
         name: s.name,
         slug: s.slug,
         order: s.order,
         weight: s.weight,
+        color: s.color,
       },
     });
     subjectIdMap.set(s.id, created.id);

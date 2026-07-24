@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, BarChart3, RotateCcw, FileText, Scale, Flame } from "lucide-react";
-import { mockUser } from "@/lib/mock-data";
+import { Home, BookOpen, BarChart3, RotateCcw, FileText, Scale, Flame, LogOut } from "lucide-react";
+import { signOutAction } from "@/lib/actions";
 
 const items = [
   { href: "/", label: "Início", icon: Home },
@@ -13,7 +14,13 @@ const items = [
   { href: "/desempenho", label: "Desempenho", icon: BarChart3 },
 ];
 
-export default function SideNav() {
+export default function SideNav({
+  user,
+  streak,
+}: {
+  user: { name?: string | null; image?: string | null };
+  streak: { currentStreak: number; xp: number; level: number };
+}) {
   const pathname = usePathname();
 
   return (
@@ -51,14 +58,42 @@ export default function SideNav() {
         </ul>
       </nav>
 
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-3">
-        <div className="flex items-center gap-2 text-sm">
-          <Flame size={16} className="text-[var(--warning)]" />
-          <span className="font-semibold">{mockUser.currentStreakDays} dias seguidos</span>
+      <div className="space-y-3">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--background)] p-3">
+          <div className="flex items-center gap-2 text-sm">
+            <Flame size={16} className="text-[var(--warning)]" />
+            <span className="font-semibold">{streak.currentStreak} dias seguidos</span>
+          </div>
+          <p className="mt-1 text-xs text-[var(--muted)]">
+            Nível {streak.level} · {streak.xp} XP
+          </p>
         </div>
-        <p className="mt-1 text-xs text-[var(--muted)]">
-          Nível {mockUser.level} · {mockUser.xp} XP
-        </p>
+
+        <div className="flex items-center gap-2 rounded-xl px-1 py-1">
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name ?? "Você"}
+              width={28}
+              height={28}
+              className="rounded-full"
+            />
+          ) : (
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--primary-light)] text-xs font-semibold text-[var(--primary-dark)]">
+              {(user.name ?? "V")[0]}
+            </div>
+          )}
+          <span className="flex-1 truncate text-xs font-medium">{user.name}</span>
+          <form action={signOutAction}>
+            <button
+              type="submit"
+              title="Sair"
+              className="flex h-7 w-7 items-center justify-center rounded-lg text-[var(--muted)] transition-colors hover:bg-[var(--background)] hover:text-[var(--danger)]"
+            >
+              <LogOut size={14} />
+            </button>
+          </form>
+        </div>
       </div>
     </aside>
   );

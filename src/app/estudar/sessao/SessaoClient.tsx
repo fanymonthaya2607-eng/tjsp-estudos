@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { CheckCircle2, Home, RotateCcw, Trophy } from "lucide-react";
-import { buildSessionForMode } from "@/lib/study-engine";
+import { submitAnswer } from "@/lib/actions";
 import type { StudyMode } from "@/lib/types";
+import type { SessionQuestion } from "@/lib/db-types";
 import QuestionCard from "@/components/QuestionCard";
 
 const modeTitles: Record<StudyMode, string> = {
@@ -20,23 +20,20 @@ const modeTitles: Record<StudyMode, string> = {
   TOPIC_TRAINING: "Treino de assunto",
 };
 
-export default function SessaoClient() {
-  const searchParams = useSearchParams();
-  const mode = (searchParams.get("mode") as StudyMode) || "QUICK_STUDY";
-  const subjectId = searchParams.get("subjectId") || undefined;
-  const topicId = searchParams.get("topicId") || undefined;
-  const difficulty = searchParams.get("difficulty") || undefined;
-  const count = Number(searchParams.get("count") || 10);
-
-  const questions = useMemo(
-    () => buildSessionForMode(mode, { subjectId, topicId, difficulty, count }),
-    [mode, subjectId, topicId, difficulty, count]
-  );
-
+export default function SessaoClient({
+  mode,
+  questions,
+  savedQuestionIds,
+}: {
+  mode: StudyMode;
+  questions: SessionQuestion[];
+  savedQuestionIds: string[];
+}) {
   const [index, setIndex] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [answeredCount, setAnsweredCount] = useState(0);
   const [finished, setFinished] = useState(false);
+  const savedSet = new Set(savedQuestionIds);
 
   if (questions.length === 0) {
     return (
@@ -118,9 +115,20 @@ export default function SessaoClient() {
         question={current}
         index={index}
         total={questions.length}
-        onAnswered={(correct) => {
+        initialSaved={savedSet.has(current.id)}
+        onAnswered={(correct, timeSpentSeconds, selectedOptionId) => {
           setAnsweredCount((c) => c + 1);
           if (correct) setCorrectCount((c) => c + 1);
+          submitAnswer({
+            questionId: current.id,
+            selectedOptionId,
+            isCorrect: correct,
+            timeSpentSeconds,
+          }).catch(() => {
+            // Falha silenciosa: a resposta já foi mostrada na tela; se o registro
+            // no banco falhar, o desempenho pode ficar levemente desatualizado,
+            // mas isso não deve travar a experiência de estudo.
+          });
         }}
         onNext={() => {
           if (index + 1 >= questions.length) {

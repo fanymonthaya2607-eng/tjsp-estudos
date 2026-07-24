@@ -1,31 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { CheckCircle2, XCircle, Bookmark, BookmarkCheck, Lightbulb, GraduationCap } from "lucide-react";
-import type { Question } from "@/lib/types";
+import type { SessionQuestion } from "@/lib/db-types";
 import { OriginBadge, DifficultyBadge } from "./badges";
-import { topicName } from "@/lib/study-engine";
+import { toggleSaveQuestion } from "@/lib/actions";
 
 // Observação: este componente é remontado a cada questão via `key={question.id}`
-// no componente pai (SessaoClient), então o estado local (selectedId, submitted,
-// saved) já nasce zerado a cada nova questão — não é necessário resetá-lo em um efeito.
+// no componente pai (SessaoClient), então o estado local (selectedId, submitted)
+// já nasce zerado a cada nova questão — não é necessário resetá-lo em um efeito.
 export default function QuestionCard({
   question,
   index,
   total,
+  initialSaved = false,
   onAnswered,
   onNext,
 }: {
-  question: Question;
+  question: SessionQuestion;
   index: number;
   total: number;
-  onAnswered: (correct: boolean, timeSpentSeconds: number) => void;
+  initialSaved?: boolean;
+  onAnswered: (correct: boolean, timeSpentSeconds: number, selectedOptionId: string | null) => void;
   onNext: () => void;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(initialSaved);
   const [startedAt] = useState(() => Date.now());
+  const [, startTransition] = useTransition();
 
   const selectedOption = question.options.find((o) => o.id === selectedId);
   const correctOption = question.options.find((o) => o.isCorrect);
@@ -34,7 +37,14 @@ export default function QuestionCard({
   function handleSubmit() {
     if (!selectedId || submitted) return;
     setSubmitted(true);
-    onAnswered(isCorrect, Math.round((Date.now() - startedAt) / 1000));
+    onAnswered(isCorrect, Math.round((Date.now() - startedAt) / 1000), selectedId);
+  }
+
+  function handleToggleSave() {
+    setSaved((s) => !s);
+    startTransition(() => {
+      toggleSaveQuestion(question.id).catch(() => setSaved((s) => !s));
+    });
   }
 
   return (
@@ -44,7 +54,7 @@ export default function QuestionCard({
           Questão {index + 1} de {total}
         </span>
         <button
-          onClick={() => setSaved((s) => !s)}
+          onClick={handleToggleSave}
           className="flex items-center gap-1 text-xs font-medium text-[var(--muted)] transition-colors hover:text-[var(--primary)]"
         >
           {saved ? <BookmarkCheck size={16} className="text-[var(--primary)]" /> : <Bookmark size={16} />}
@@ -56,7 +66,7 @@ export default function QuestionCard({
         <OriginBadge origin={question.origin} />
         <DifficultyBadge difficulty={question.difficulty} />
         <span className="rounded-full bg-[var(--background)] px-2.5 py-1 text-[11px] font-semibold text-[var(--muted)]">
-          {topicName(question.topicId)}
+          {question.topic.name}
         </span>
       </div>
 
@@ -131,7 +141,7 @@ export default function QuestionCard({
             <p className="text-sm leading-relaxed text-[var(--foreground)]">{question.explanation}</p>
           </div>
 
-          {!isCorrect && selectedOption && (
+          {!isCorrect && selectedOption?.rationale && (
             <div className="rounded-xl border border-[var(--border)] p-4">
               <p className="mb-1 text-sm font-semibold">Por que a alternativa {selectedOption.label} está errada</p>
               <p className="text-sm leading-relaxed text-[var(--muted)]">{selectedOption.rationale}</p>
